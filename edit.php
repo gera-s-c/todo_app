@@ -4,7 +4,7 @@
     $id = $_GET['id'] ?? null;
 
     // Validar que el ID esté presente
-    if (!$id) {
+    if (!$id || !is_numeric($id)) {
         die("ID no válido.");
     }
 
@@ -26,8 +26,13 @@
         if ($due < date('Y-m-d')) {
             die("La fecha no puede ser anterior a hoy.");
         }
-            header("Location: index.php");
-            exit();
+
+        $stmt = $conn->prepare("UPDATE crud SET title = ?, descripcion = ?, due_date = ? WHERE id = ?");
+        $stmt->bind_param("sssi", $title, $desc, $due, $id);
+        $stmt->execute();
+
+        header("Location: index.php");
+        exit();
 
     }
 ?>
